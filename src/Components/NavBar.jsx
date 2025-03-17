@@ -32,7 +32,7 @@ export default function NavBar() {
   }
   
   return (
-    <header className="bg-gradient-to-r from-purple-800 to-indigo-900 text-white shadow-lg">
+    <header className=" bg-gradient-to-r from-purple-800 to-indigo-900 text-white shadow-lg">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between py-4">
           {/* Logo */}
