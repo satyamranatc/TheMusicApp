@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./ListenPage.css";
 
-export default function Listen() {
+export default function Listen({setClickedSong}) {
+  const navigate = useNavigate();
   const [songList, setSongList] = useState([
     {
       id: 1,
@@ -32,33 +34,35 @@ export default function Listen() {
     },
   ]);
 
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [selectedSong, setSelectedSong] = useState(null);
-  const [audioInstance, setAudioInstance] = useState(null);
+  // const [isPlaying, setIsPlaying] = useState(false);
+  // const [selectedSong, setSelectedSong] = useState(null);
+  // const [audioInstance, setAudioInstance] = useState(null);
 
-  const handlePlay = (userSelected) => {
-    if (selectedSong?.audio === userSelected.audio) {
-      if (isPlaying) {
-        audioInstance.pause();
-        setIsPlaying(false);
-      } else {
-        audioInstance.play();
-        setIsPlaying(true);
-      }
-    } else {
-      if (audioInstance) {
-        audioInstance.pause();
-      }
+  // const handlePlay = (userSelected) => {
+  //   if (selectedSong?.audio === userSelected.audio) {
+  //     if (isPlaying) {
+  //       audioInstance.pause();
+  //       setIsPlaying(false);
+  //     } else {
+  //       audioInstance.play();
+  //       setIsPlaying(true);
+  //     }
+  //   } 
+  //   else 
+  //   {
+  //     if (audioInstance) {
+  //       audioInstance.pause();
+  //     }
 
-      const newAudio = new Audio(userSelected.audio);
-      newAudio.play();
-      setAudioInstance(newAudio);
-      setSelectedSong(userSelected);
-      setIsPlaying(true);
+  //     const newAudio = new Audio(userSelected.audio);
+  //     newAudio.play();
+  //     setAudioInstance(newAudio);
+  //     setSelectedSong(userSelected);
+  //     setIsPlaying(true);
 
      
-    }
-  };
+  //   }
+  // };
 
   return (
     <div>
@@ -75,9 +79,16 @@ export default function Listen() {
             <p>
               From {song.movie}. By: {song.artist} - {song.duration} Seconds
             </p>
-            <button onClick={() => handlePlay(song)}>
+            {/* <button onClick={() => handlePlay(song)}>
               {isPlaying && selectedSong?.id === song.id ? "Pause" : "Play"}
-            </button>
+            </button> */}
+
+            <button
+            onClick={()=>{
+              setClickedSong(song);
+              navigate("/PlaySong")
+            }}
+            >Play Now</button>
           </div>
         ))}
       </section>

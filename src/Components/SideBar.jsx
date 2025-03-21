@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { 
   HomeIcon, 
@@ -8,12 +8,13 @@ import {
   CompassIcon, 
   MusicIcon,
   PlusCircleIcon,
-  HeartIcon,
-  ClockIcon
+  ChevronLeftIcon,
+  ChevronRightIcon
 } from 'lucide-react'
 
 export default function SideBar() {
   const location = useLocation()
+  const [collapsed, setCollapsed] = useState(false)
   
   // Main navigation items
   const mainNavItems = [
@@ -24,43 +25,59 @@ export default function SideBar() {
     { id: 5, name: 'Discover', path: '/discover', icon: CompassIcon },
   ]
   
-  // User's playlists
+  // User's playlists (simplified)
   const playlists = [
-    { id: 1, name: 'Chill Vibes', count: '24 songs' },
-    { id: 2, name: 'Workout Mix', count: '18 songs' },
-    { id: 3, name: 'Road Trip', count: '32 songs' },
-    { id: 4, name: '90s Hits', count: '45 songs' },
-    { id: 5, name: 'Focus Flow', count: '28 songs' }
-  ]
-  
-  // Recently played
-  const recentlyPlayed = [
-    { id: 1, name: 'Blinding Lights', artist: 'The Weeknd' },
-    { id: 2, name: 'As It Was', artist: 'Harry Styles' },
-    { id: 3, name: 'Good 4 U', artist: 'Olivia Rodrigo' }
+    { id: 1, name: 'Chill Vibes', count: '24' },
+    { id: 2, name: 'Workout Mix', count: '18' },
+    { id: 3, name: 'Road Trip', count: '32' }
   ]
   
   // Check if a nav item is active
   const isActive = (path) => location.pathname === path
 
+  // Toggle sidebar collapse
+  const toggleSidebar = () => {
+    setCollapsed(!collapsed)
+  }
+
   return (
-    <aside className="h-full overflow-y-auto bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800">
-      {/* User Profile Section */}
-      <div className="p-6 mb-2">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600"></div>
-          <div>
-            <h3 className="font-medium text-sm dark:text-white">Alex Johnson</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Premium Member</p>
+    <aside className={`relative h-full transition-all duration-300 bg-black border-r border-zinc-800 flex flex-col ${
+      collapsed ? 'w-16' : 'w-64'
+    }`}>
+      {/* Toggle Button */}
+      <button 
+        onClick={toggleSidebar}
+        className="absolute -right-3 top-10 bg-zinc-800 border border-zinc-700 text-emerald-400 rounded-full p-1 z-10"
+      >
+        {collapsed ? <ChevronRightIcon size={16} /> : <ChevronLeftIcon size={16} />}
+      </button>
+
+      {/* User Profile Section - Simplified */}
+      <div className={`p-4 mb-2 ${collapsed ? 'flex justify-center' : ''}`}>
+        {collapsed ? (
+          <div className="w-8 h-8 rounded-md bg-zinc-800 border border-zinc-700 flex items-center justify-center text-emerald-400 text-sm font-medium">
+            A
           </div>
-        </div>
+        ) : (
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 rounded-md bg-zinc-800 border border-zinc-700 flex items-center justify-center text-emerald-400 text-sm font-medium">
+              A
+            </div>
+            <div className="overflow-hidden">
+              <h3 className="font-medium text-sm text-white truncate">Alex</h3>
+              <p className="text-xs text-zinc-500 truncate">Premium</p>
+            </div>
+          </div>
+        )}
       </div>
       
-      {/* Main Navigation */}
-      <div className="px-3 py-2">
-        <h3 className="px-3 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">
-          Browse Music
-        </h3>
+      {/* Main Navigation - Scrollable */}
+      <div className="px-2 py-2 flex-grow overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-zinc-900">
+        {!collapsed && (
+          <h3 className="px-3 text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-2">
+            Browse
+          </h3>
+        )}
         <nav>
           <ul>
             {mainNavItems.map((item) => {
@@ -69,78 +86,84 @@ export default function SideBar() {
                 <li key={item.id}>
                   <Link 
                     to={item.path}
-                    className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                    className={`flex items-center space-x-3 px-3 py-2 rounded-md text-sm transition-colors ${
                       isActive(item.path)
-                        ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 font-medium'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
-                    }`}
+                        ? 'bg-zinc-800 text-emerald-400 font-medium'
+                        : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200'
+                    } ${collapsed ? 'justify-center' : ''}`}
+                    title={collapsed ? item.name : ''}
                   >
                     <Icon size={18} />
-                    <span>{item.name}</span>
+                    {!collapsed && <span>{item.name}</span>}
                   </Link>
                 </li>
               )
             })}
           </ul>
         </nav>
-      </div>
-      
-      {/* User's Playlists */}
-      <div className="px-3 py-4">
-        <div className="flex items-center justify-between px-3 mb-2">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-            Your Playlists
-          </h3>
-          <button className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
-            <PlusCircleIcon size={16} />
-          </button>
-        </div>
-        <ul className="space-y-1">
-          {playlists.map((playlist) => (
-            <li key={playlist.id}>
-              <a href="#" className="flex items-center justify-between px-3 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300">
-                <span className="truncate">{playlist.name}</span>
-                <span className="text-xs text-gray-500 dark:text-gray-400">{playlist.count}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-      
-      {/* Recently Played */}
-      <div className="px-3 py-4 border-t border-gray-200 dark:border-gray-800">
-        <h3 className="px-3 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">
-          Recently Played
-        </h3>
-        <ul className="space-y-1">
-          {recentlyPlayed.map((track) => (
-            <li key={track.id}>
-              <a href="#" className="flex items-center space-x-3 px-3 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
-                <div className="w-8 h-8 flex-shrink-0 bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center">
-                  <MusicIcon size={14} className="text-gray-500 dark:text-gray-400" />
+        
+        {/* User's Playlists - Hidden when collapsed */}
+        {!collapsed && (
+          <div className="px-1 py-4">
+            <div className="flex items-center justify-between px-2 mb-2">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                Playlists
+              </h3>
+              <button className="text-emerald-500 hover:text-emerald-400">
+                <PlusCircleIcon size={16} />
+              </button>
+            </div>
+            <ul className="space-y-1">
+              {playlists.map((playlist) => (
+                <li key={playlist.id}>
+                  <a href="#" className="flex items-center justify-between px-3 py-2 text-sm rounded-md hover:bg-zinc-900 text-zinc-400 hover:text-zinc-200">
+                    <span className="truncate">{playlist.name}</span>
+                    <span className="text-xs text-zinc-600">{playlist.count}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        
+        {/* Recently Played - Hidden when collapsed */}
+        {!collapsed && (
+          <div className="px-1 py-2">
+            <h3 className="px-2 text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-2">
+              Recent
+            </h3>
+            <div className="space-y-1">
+              <a href="#" className="flex items-center space-x-3 px-3 py-2 text-sm rounded-md hover:bg-zinc-900 group">
+                <div className="w-8 h-8 flex-shrink-0 bg-zinc-800 rounded-md flex items-center justify-center">
+                  <MusicIcon size={14} className="text-zinc-500 group-hover:text-emerald-400" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-gray-800 dark:text-gray-200">{track.name}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{track.artist}</p>
+                  <p className="truncate text-zinc-300">Blinding Lights</p>
+                  <p className="text-xs text-zinc-600 truncate">The Weeknd</p>
                 </div>
               </a>
-            </li>
-          ))}
-        </ul>
+            </div>
+          </div>
+        )}
       </div>
       
-      {/* Quick Actions */}
-      <div className="px-3 py-4 mt-auto border-t border-gray-200 dark:border-gray-800">
-        <div className="grid grid-cols-2 gap-2">
-          <a href="#" className="flex flex-col items-center justify-center p-3 text-sm rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
-            <HeartIcon size={18} className="mb-1 text-purple-500" />
-            <span>Favorites</span>
-          </a>
-          <a href="#" className="flex flex-col items-center justify-center p-3 text-sm rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
-            <ClockIcon size={18} className="mb-1 text-purple-500" />
-            <span>History</span>
-          </a>
-        </div>
+      {/* Now Playing (Mini Player) - Always visible */}
+      <div className={`p-3 border-t border-zinc-800 bg-zinc-900/50 ${collapsed ? 'flex justify-center' : ''}`}>
+        {collapsed ? (
+          <div className="w-8 h-8 rounded-md bg-zinc-800 flex items-center justify-center">
+            <MusicIcon size={16} className="text-emerald-400" />
+          </div>
+        ) : (
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-md bg-zinc-800 flex items-center justify-center">
+              <MusicIcon size={16} className="text-emerald-400" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-white truncate">Now Playing</p>
+              <p className="text-xs text-zinc-500 truncate">Artist Name</p>
+            </div>
+          </div>
+        )}
       </div>
     </aside>
   )

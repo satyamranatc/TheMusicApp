@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useState} from 'react'
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 
 import SideBar from "./Components/SideBar.jsx"
@@ -8,9 +8,13 @@ import NotFound from "./Components/NotFound.jsx"
 
 import Home from "./Pages/Home.jsx"
 import Listen from "./Pages/Listen.jsx"
+import PlaySong from "./Pages/PlaySong.jsx"
 import Saved from "./Pages/Saved.jsx"
 
 export default function App() {
+
+  let [ClickedSong,setClickedSong] = useState(null);
+
   return (
     <BrowserRouter>
       <div className="flex flex-col min-h-screen bg-gray-100">
@@ -37,7 +41,8 @@ export default function App() {
             <main>
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/Listen" element={<Listen />} />
+                <Route path="/Listen" element={<Listen setClickedSong = {setClickedSong} />} />
+                <Route path="/PlaySong" element={<PlaySong ClickedSong={ClickedSong}  />} />
                 <Route path="/Saved" element={<Saved />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
